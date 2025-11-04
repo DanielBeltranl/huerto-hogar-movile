@@ -1,28 +1,16 @@
 package org.example.project
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.jetbrains.compose.resources.painterResource
+import androidx.navigation.toRoute
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
-import huerto_hogar.composeapp.generated.resources.Res
-import huerto_hogar.composeapp.generated.resources.compose_multiplatform
 import org.example.project.view.screens.HomeScreen
 import org.example.project.view.screens.LoginScreen
+import org.example.project.view.screens.ProductDetails
+import org.example.project.view.screens.ProductDetailsScreen
 
 @Composable
 @Preview
@@ -30,10 +18,18 @@ fun App() {
     MaterialTheme {
         val navController = rememberNavController()
         NavHost(navController, startDestination = LoginScreen){
-            composable<LoginScreen>{LoginScreen(
+            composable<LoginScreen>{ LoginScreen(
                 onLoggedIn = {navController.navigate(HomeScreen)}
             )}
-            composable<HomeScreen>{ HomeScreen() }
+            composable<HomeScreen>{
+                HomeScreen(onProductClick = { productId ->
+                    navController.navigate(ProductDetails(id = productId))
+                })
+            }
+            composable<ProductDetails> { backStackEntry ->
+                val productDetails: ProductDetails = backStackEntry.toRoute()
+                ProductDetailsScreen(id = productDetails.id)
+            }
         }
 
 
