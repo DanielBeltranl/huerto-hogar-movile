@@ -122,6 +122,7 @@ fun LoginScreen(onLoggedIn: () -> Unit, viewModel: LoginViewModel = viewModel())
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
+                keyboardActions = KeyboardActions (onDone = { viewModel.login(user, password) }),
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -141,7 +142,14 @@ fun LoginScreen(onLoggedIn: () -> Unit, viewModel: LoginViewModel = viewModel())
             }
 
             if (mensaje != null) {
-                Text(text = mensaje)
+                Text(
+                    text = mensaje,
+                    color = if (state.loggedIn) Color.Magenta else Color.Red,
+                    modifier = Modifier
+                        .scale(if (state.loggedIn) 1.2f else 1f)
+                        .background(Color.White.copy(alpha = 0.8f), RoundedCornerShape(8.dp))
+                        .padding(8.dp)
+                )
             }
 
         }

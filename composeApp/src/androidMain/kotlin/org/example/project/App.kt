@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -35,7 +36,9 @@ fun App() {
         NavHost(navController, startDestination = LoginScreen) {
             composable<LoginScreen> {
                 LoginScreen(
-                    onLoggedIn = { navController.navigate(HomeScreen) }
+                    onLoggedIn = { navController.navigate(HomeScreen){
+
+                    } }
                 )
             }
 
@@ -69,18 +72,25 @@ fun MainScreen(navController: androidx.navigation.NavController) {
                     selected = selectedItem == 0,
                     onClick = {
                         selectedItem = 0
-                        mainNavController.navigate("Catalogo") {
+                        mainNavController.navigate("home") {
                             popUpTo("home") { inclusive = true }
                         }
                     }
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
+                    icon = {
+                        Icon(
+                            Icons.Filled.Person,
+                            contentDescription = "Profile",
+                            tint = if (selectedItem == 1) Color.Blue else Color.Gray
+                        )
+                    },
                     label = { Text("Perfil") },
                     selected = selectedItem == 1,
                     onClick = {
                         selectedItem = 1
                         mainNavController.navigate("profile") {
+                            launchSingleTop = true
                             popUpTo("profile") { inclusive = true }
                         }
                     }
