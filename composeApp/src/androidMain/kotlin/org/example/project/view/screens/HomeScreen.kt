@@ -31,32 +31,9 @@ fun HomeScreen(
 ){
     var selectedItem = remember { mutableStateOf(0) }
 
-    Scaffold (
-        modifier = modifier
-            .statusBarsPadding()
-            .padding(5.dp),
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Home") },
-                    selected = selectedItem.value == 0,
-                    onClick = { navController.navigate(HomeScreen) }
-                )
-
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Perfil") },
-                    label = { Text("Perfil") },
-                    selected = selectedItem.value == 2,
-                    onClick = { navController.navigate(ProfileScreen)}
-                )
-            }
-        }
-    ) { padding ->
         HomeGrid(
             products = productos,
-            modifier = Modifier.padding(padding),
             onProductClick = onProductClick
         )
-    }
+
 }

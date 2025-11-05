@@ -34,6 +34,7 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network)
             implementation(libs.androidx.navigation.compose)
+            implementation(libs.coil.gif)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
