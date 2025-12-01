@@ -17,41 +17,40 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import org.example.project.repository.productos
+import org.example.project.repository.Product
+import org.example.project.repository.ProductRepositoryImpl
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.example.project.view.screens.HomeScreen
 import org.example.project.view.screens.LoginScreen
 import org.example.project.view.screens.ProductDetails
 import org.example.project.view.screens.ProductDetailsScreen
 import org.example.project.view.screens.ProfileScreen
-import org.example.project.view.screens.composables.Details
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
         val navController = rememberNavController()
-        var currentRoute by remember { mutableStateOf<String>("home") }
+        val repository = ProductRepositoryImpl()
+        val products = repository.obtenerProductos()
 
         NavHost(navController, startDestination = LoginScreen) {
             composable<LoginScreen> {
                 LoginScreen(
-                    onLoggedIn = { navController.navigate(HomeScreen){
-
-                    } }
+                    onLoggedIn = { navController.navigate(HomeScreen) }
                 )
             }
 
             composable<HomeScreen> {
-                currentRoute = "home"
-                MainScreen(navController)
+                MainScreen(navController, products)
             }
 
             composable<ProductDetails> { backStackEntry ->
                 val productDetails: ProductDetails = backStackEntry.toRoute()
                 ProductDetailsScreen(
                     navController = navController,
-                    id = productDetails.id
+                    id = productDetails.id,
+                    products = products
                 )
             }
         }
@@ -59,7 +58,7 @@ fun App() {
 }
 
 @Composable
-fun MainScreen(navController: androidx.navigation.NavController) {
+fun MainScreen(navController: androidx.navigation.NavController, products: List<Product>) {
     val mainNavController = rememberNavController()
     var selectedItem by remember { mutableStateOf(0) }
 
@@ -109,7 +108,8 @@ fun MainScreen(navController: androidx.navigation.NavController) {
                     navController = navController,
                     onProductClick = { productId ->
                         navController.navigate(ProductDetails(id = productId))
-                    }
+                    },
+                    products = products
                 )
             }
             composable("profile") {
