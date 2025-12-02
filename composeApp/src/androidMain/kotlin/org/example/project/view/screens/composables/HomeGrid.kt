@@ -25,29 +25,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import org.example.project.R
-import org.example.project.repository.Product
+import org.example.project.model.Producto // Importamos tu nuevo data class Producto
 
 @Composable
 fun HomeGrid(
-    products: List<Product>,
+    products: List<Producto>,
     modifier: Modifier = Modifier,
-    onProductClick: (Int) -> Unit
+    onProductClick: (String) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(180.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        itemsIndexed(products, key = { _, product -> product.id }) { _, product ->
+        itemsIndexed(products, key = { _, producto -> producto.id_fruta }) { _, producto ->
             Column(
                 modifier = modifier
                     .padding(5.dp)
                     .background(
-                        color = Color.White, 
+                        color = Color.White,
                         shape = RoundedCornerShape(16.dp)
                     )
-                    .clickable { onProductClick(product.id) }
+                    .clickable { onProductClick(producto.id_fruta) }
             ) {
-                val imageRes = when (product.code) {
+                val imageRes = when (producto.id_fruta) {
                     "FR001" -> R.drawable.fr001
                     "FR002" -> R.drawable.fr002
                     "FR003" -> R.drawable.fr003
@@ -62,7 +62,7 @@ fun HomeGrid(
 
                 AsyncImage(
                     model = imageRes,
-                    contentDescription = product.name,
+                    contentDescription = producto.nombre,
                     modifier = Modifier
                         .fillMaxSize()
                         .aspectRatio(1f)
@@ -72,25 +72,26 @@ fun HomeGrid(
                 )
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = product.name,
+                        text = producto.nombre,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
 
+                    // Debes definir el composable AddButton() si no existe
                     AddButton()
                 }
 
                 Text(
-                    text = "$${product.price}",
+                    text = "$${producto.precio}",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 8.dp).padding(horizontal = 8.dp)
                 )
             }
         }

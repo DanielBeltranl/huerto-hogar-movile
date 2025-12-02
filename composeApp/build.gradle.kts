@@ -35,6 +35,13 @@ kotlin {
             implementation(libs.coil.network)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.coil.gif)
+            implementation("com.squareup.retrofit2:retrofit:2.9.0")
+            implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+            implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+            // ViewModel con Compose
+            implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+            implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

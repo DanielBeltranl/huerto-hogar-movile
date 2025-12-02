@@ -1,48 +1,88 @@
 package org.example.project
 
+import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import org.example.project.repository.Product
-import org.example.project.repository.ProductRepositoryImpl
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlinx.serialization.Serializable
+import org.example.project.model.Producto
+import org.example.project.repository.ProductoRepository
 import org.example.project.view.screens.HomeScreen
 import org.example.project.view.screens.LoginScreen
-import org.example.project.view.screens.ProductDetails
 import org.example.project.view.screens.ProductDetailsScreen
 import org.example.project.view.screens.ProfileScreen
+
+@Serializable
+data class ProductDetails(val id: String?)
+
+@Serializable
+object LoginScreen
+@Serializable
+object HomeScreenRoute
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
         val navController = rememberNavController()
-        val repository = ProductRepositoryImpl()
-        val products = repository.obtenerProductos()
+
+        val productoRepository = remember { ProductoRepository() }
+
+        var productsState by remember { mutableStateOf<List<Producto>>(emptyList()) }
+        var isLoading by remember { mutableStateOf(true) }
+        var isError by remember { mutableStateOf(false) }
+
+        LaunchedEffect(Unit) {
+            val result = productoRepository.getListaProductos()
+            result.fold(
+                onSuccess = { listaProductos ->
+                    productsState = listaProductos ?: emptyList()
+                    isLoading = false
+                },
+                onFailure = {
+                    Log.e("App.kt", "Error al cargar productos", it)
+                    isLoading = false
+                    isError = true
+                }
+            )
+        }
 
         NavHost(navController, startDestination = LoginScreen) {
             composable<LoginScreen> {
                 LoginScreen(
-                    onLoggedIn = { navController.navigate(HomeScreen) }
+                    onLoggedIn = { navController.navigate(HomeScreenRoute) }
                 )
             }
 
-            composable<HomeScreen> {
-                MainScreen(navController, products)
+            composable<HomeScreenRoute> {
+                when {
+                    isLoading -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    isError -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text("Error al cargar productos", color = MaterialTheme.colorScheme.error)
+                        }
+                    }
+                    else -> {
+                        MainScreen(navController, productsState)
+                    }
+                }
             }
 
             composable<ProductDetails> { backStackEntry ->
@@ -50,7 +90,6 @@ fun App() {
                 ProductDetailsScreen(
                     navController = navController,
                     id = productDetails.id,
-                    products = products
                 )
             }
         }
@@ -58,7 +97,7 @@ fun App() {
 }
 
 @Composable
-fun MainScreen(navController: androidx.navigation.NavController, products: List<Product>) {
+fun MainScreen(navController: androidx.navigation.NavController, products: List<Producto>) {
     val mainNavController = rememberNavController()
     var selectedItem by remember { mutableStateOf(0) }
 
