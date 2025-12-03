@@ -1,53 +1,53 @@
 package org.example.project.view.screens.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import org.example.project.R
-import org.example.project.repository.Product
-import org.example.project.repository.productos
-import org.example.project.viewmodel.HomeViewModel
-import org.example.project.viewmodel.LoginViewModel
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.example.project.model.Producto // Importamos tu nuevo data class Producto
 
-@Preview
 @Composable
-fun HomeGrid(products: List<Product>, modifier: Modifier = Modifier) {
-
+fun HomeGrid(
+    products: List<Producto>,
+    modifier: Modifier = Modifier,
+    onProductClick: (String) -> Unit
+) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(180.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-
-        itemsIndexed(products, key = { _, product -> product.id }) { _, product ->
+        itemsIndexed(products, key = { _, producto -> producto.id_fruta }) { _, producto ->
             Column(
-                modifier = modifier.padding(5.dp).
-                background(color = Color.White, shape = RoundedCornerShape(16.dp))
-
+                modifier = modifier
+                    .padding(5.dp)
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .clickable { onProductClick(producto.id_fruta) }
             ) {
-                // IMAGEN
-                val imageRes = when (product.code) {
+                val imageRes = when (producto.id_fruta) {
                     "FR001" -> R.drawable.fr001
                     "FR002" -> R.drawable.fr002
                     "FR003" -> R.drawable.fr003
@@ -62,7 +62,7 @@ fun HomeGrid(products: List<Product>, modifier: Modifier = Modifier) {
 
                 AsyncImage(
                     model = imageRes,
-                    contentDescription = product.name,
+                    contentDescription = producto.nombre,
                     modifier = Modifier
                         .fillMaxSize()
                         .aspectRatio(1f)
@@ -72,30 +72,27 @@ fun HomeGrid(products: List<Product>, modifier: Modifier = Modifier) {
                 )
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
-
                 ) {
-
                     Text(
-                        text = product.name,
+                        text = producto.nombre,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
 
+                    // Debes definir el composable AddButton() si no existe
                     AddButton()
                 }
 
                 Text(
-                    text = "$${product.price}",
+                    text = "$${producto.precio}",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 8.dp).padding(horizontal = 8.dp)
                 )
-
-
             }
         }
     }

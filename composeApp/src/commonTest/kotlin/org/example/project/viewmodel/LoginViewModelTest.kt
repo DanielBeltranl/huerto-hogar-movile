@@ -11,24 +11,24 @@ class LoginViewModelTest {
     @Test
     fun `inicio de sesión exitoso`() {
         val viewModel = LoginViewModel()
-        viewModel.login("test@test.com", "password")
-        assertTrue(viewModel.state.loggedIn)
-        assertNull(viewModel.state.error)
+        viewModel.login("test@test.com", "passwordvalido")
+        assertTrue(viewModel.state.loggedIn, "El inicio de sesión debería ser exitoso")
+        assertNull(viewModel.state.error, "No debería haber ningún error")
     }
 
     @Test
-    fun `inicio de sesión con usuario inválido`() {
+    fun `falla el inicio de sesión por correo inválido`() {
         val viewModel = LoginViewModel()
-        viewModel.login("test", "password")
-        assertFalse(viewModel.state.loggedIn)
-        assertEquals("El usuario no es valido", viewModel.state.error)
+        viewModel.login("usuario-invalido", "passwordvalido")
+        assertFalse(viewModel.state.loggedIn, "El inicio de sesión no debería ocurrir")
+        assertEquals("El usuario no es valido", viewModel.state.error, "El mensaje de error no es el esperado")
     }
 
     @Test
-    fun `inicio de sesión con contraseña inválida`() {
+    fun `falla el inicio de sesión por contraseña corta`() {
         val viewModel = LoginViewModel()
-        viewModel.login("test@test.com", "1234")
-        assertFalse(viewModel.state.loggedIn)
-        assertEquals("La contraseña no es valida", viewModel.state.error)
+        viewModel.login("test@test.com", "corta")
+        assertFalse(viewModel.state.loggedIn, "El inicio de sesión no debería ocurrir")
+        assertEquals("La contraseña no es valida", viewModel.state.error, "El mensaje de error no es el esperado")
     }
 }
