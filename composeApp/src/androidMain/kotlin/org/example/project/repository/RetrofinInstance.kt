@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitInstance {
 
     private const val URL = "https://hh-api-producto.onrender.com";
+    private const val TVMAZE_URL = "https://api.tvmaze.com/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -29,9 +30,19 @@ object RetrofitInstance {
             .build()
     }
 
-        val api: ProductosService by lazy {
-            retrofit.create(ProductosService::class.java)
-        }
+    val api: ProductosService by lazy {
+        retrofit.create(ProductosService::class.java)
+    }
 
+    private val tvMazeRetrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(TVMAZE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
+    val tvMazeApi: TvMazeService by lazy {
+        tvMazeRetrofit.create(TvMazeService::class.java)
+    }
 }
